@@ -31,7 +31,7 @@ staging_events_table_create= ("""
         , method VARCHAR
         , page VARCHAR
         , registration VARCHAR
-        , sessioId VARCHAR
+        , sessionId VARCHAR
         , song VARCHAR
         , status INT
         , ts BIGINT
@@ -156,11 +156,11 @@ songplay_table_insert = ("""
         , user_agent
     )
     SELECT DISTINCT
-        TIMESTAMP 'epoch' + (se.ts / 1000) * INTERVAL '1 second'
+        TIMESTAMP 'epoch' + (e.ts / 1000) * INTERVAL '1 second'
         , e.userId AS user_id
         , e.level
-        , s.song_id
-        , s.artist_id
+        , s.songId
+        , s.artistId AS artist_id
         , e.sessionId AS session_id
         , e.location
         , e.userAgent as user_agent
@@ -185,19 +185,19 @@ user_table_insert = ("""
 song_table_insert = ("""
     INSERT INTO songs
     SELECT DISTINCT
-        song_id
+        songId
         , title
-        , artist_id
+        , artistId
         , year
         , duration
     FROM staging_songs
-    WHERE song_id IS NOT NULL;
+    WHERE songId IS NOT NULL;
 """)
 
 artist_table_insert = ("""
     INSERT INTO songs
     SELECT DISTINCT
-        artist_id
+        artistId
         , artist_location
         , artist_latitude
         , artist_longitude

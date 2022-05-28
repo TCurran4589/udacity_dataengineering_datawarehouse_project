@@ -2,6 +2,8 @@ import configparser
 import psycopg2
 from sql_queries import copy_table_queries, insert_table_queries
 
+from create_tables import drop_tables, create_tables
+
 def load_staging_tables(cur, conn):
     for query in copy_table_queries:
         cur.execute(query)
@@ -15,6 +17,7 @@ def insert_tables(cur, conn):
 
 
 def main():
+
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 
@@ -28,8 +31,17 @@ def main():
 
     conn = psycopg2.connect(cnx)
     cur = conn.cursor()
-    
+
+    print('Dropping existing tables...')
+    drop_tables(cur, conn)
+
+    print("Creating tables...")
+    create_tables(cur, conn)
+
+    print('loading staging tables...')
     load_staging_tables(cur, conn)
+
+    print('Inserting staging tables into dim and fact tables...')
     insert_tables(cur, conn)
 
     conn.close()
