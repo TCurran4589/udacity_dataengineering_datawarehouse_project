@@ -42,8 +42,8 @@ staging_songs_table_create = ("""
     CREATE TABLE IF NOT EXISTS staging_songs(
         num_songs INTEGER NOT NULL
         , artist_id TEXT NOT NULL
-        , artist_latitude VARCHAR
-        , artist_longitude VARCHAR
+        , artist_latitude DECIMAL
+        , artist_longitude DECIMAL
         , artist_location VARCHAR
         , artist_name TEXT
         , song_id TEXT NOT NULL
@@ -123,6 +123,7 @@ staging_events_copy = (
         FROM {config['S3']['LOG_DATA']}
         CREDENTIALS 'aws_iam_role={config['IAM_ROLE']['ARN']}'
         FORMAT JSON AS {config['S3']['LOG_JSONPATH']}
+        REGION 'us-west-2'
     """
 )
 staging_songs_copy = (
@@ -131,6 +132,7 @@ staging_songs_copy = (
         FROM {config['S3']['song_data']}
         CREDENTIALS 'aws_iam_role={config['IAM_ROLE']['ARN']}'
         FORMAT JSON AS 'auto'
+        REGION 'us-west-2'
     """
 )
  
@@ -160,10 +162,12 @@ songplay_table_insert = ("""
     INNER JOIN staging_songs s
         ON e.song = s.title 
           AND e.artist = s.artist_name
+          AND s.duration > 0
     WHERE s.song_id IS NOT NULL
         AND e.session_id IS NOT NULL
         AND s.artist_id IS NOT NULL
         AND e.user_id IS NOT NULL
+        AND e.page = 'NextSong'
     ;
 """)
 

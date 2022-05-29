@@ -7,18 +7,30 @@ config = configparser.ConfigParser()
 config.read_file(open('dwh.cfg'))
 
 def drop_tables(cur, conn):
+    """_summary_
+    Takes all tables listed in the sql_queries.py file in the drop tables array and drops
+    them from the database
+    """
     for query in drop_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def create_tables(cur, conn):
+    """_summary_
+    Takes all tables listed in the sql_queries.py file in the create tables array and creates
+    them in the database
+    """
     for query in create_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def main():
+    """_summary_
+    Executes the create_tables and drop_tables functions witht he provided configuration variables
+    from dwh.cfg
+    """
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
 

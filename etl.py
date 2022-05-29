@@ -6,18 +6,31 @@ import re
 from create_tables import drop_tables, create_tables
 
 def load_staging_tables(cur, conn):
+    """_summary_
+    Loads raw data from .json files in S3 bucket and loads it into 
+    two staging tables: songs and events
+    """
     for query in copy_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def insert_tables(cur, conn):
+    """
+    Inserts data from the staging tables into the dimension and
+    fact tables create in create_tables.py
+    """
     for query in insert_table_queries:
         cur.execute(query)
         conn.commit()
 
 
 def main():
+    """
+    Runs load_staging_tables and insert_tables. Before peforming those two actions
+    it will drop and re-create the tables to prevent duplicate records being created
+    from the same file. 
+    """
 
     config = configparser.ConfigParser()
     config.read('dwh.cfg')
