@@ -1,6 +1,7 @@
 import configparser
 import psycopg2
 from sql_queries import copy_table_queries, insert_table_queries
+import re
 
 from create_tables import drop_tables, create_tables
 
@@ -38,9 +39,13 @@ def main():
     print("Creating tables...")
     create_tables(cur, conn)
 
-    print('loading staging tables...')
-    load_staging_tables(cur, conn)
+    try:
+        print('loading staging tables...')
+        load_staging_tables(cur, conn)
+    except Exception as e:
+        print(e)
 
+    print('-'*100)
     print('Inserting staging tables into dim and fact tables...')
     insert_tables(cur, conn)
 

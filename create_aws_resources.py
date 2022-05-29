@@ -80,11 +80,8 @@ redshift = boto3.client("redshift",
                        )
 
 # Replace with correct bucket
-sampleDbBucket =  s3.Bucket("awssampledbuswest2")
 
-# TODO: Iterate over bucket objects starting with "ssbgz" and print
-#for obj in sampleDbBucket.objects.filter(Prefix="ssbgz"):
-#    print(obj)
+bucket =  s3.Bucket("udacity-dend")
 
 # Create IAM Role to connect s3 w/ Redshift
 try:
